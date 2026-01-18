@@ -28,7 +28,7 @@ int main() {
     InitWindow(screenWidth, screenHeight, "Basic Shaders Using Raylib");
 
     Camera camera = { 0 };
-    camera.position = (Vector3){ 2.0f, 4.0f, 0.0f };
+    camera.position = (Vector3){ 6.0f, 6.0f, 4.0f };
     camera.target = (Vector3){ 0.0f, 0.5f, 0.0f };
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
@@ -47,6 +47,16 @@ int main() {
     lights[1] = CreateLight(LIGHT_POINT,(Vector3){ -3, 1, 3 },Vector3Zero(),RED,shader);
     lights[2] = CreateLight(LIGHT_POINT,(Vector3){ 3, 1, -3 },Vector3Zero(),GREEN,shader);
     lights[3] = CreateLight(LIGHT_POINT,(Vector3){ -3, 1, -3 },Vector3Zero(),BLUE,shader);
+
+    Model car = LoadModel("C:/dev/RayLibProjects/BasicShaders/models/car.glb");
+
+    // FOR DEBUGGING
+    std::cout << "Meshes: " << car.meshCount << std::endl;
+    std::cout << "Materials: " << car.materialCount << std::endl;
+
+    for (int i = 0; i < car.materialCount; i++) {
+        car.materials[i].shader = shader;
+    }
 
     SetTargetFPS(60);
 
@@ -69,6 +79,9 @@ int main() {
         BeginMode3D(camera);
         BeginShaderMode(shader);
 
+        DrawModel(car, {0,0,0}, 1.0f, WHITE);
+
+
         for (int i = 0; i < 4; i++) {
             UpdateLightValues(shader, lights[i]);
             if (lights[i].enabled) {
@@ -86,6 +99,7 @@ int main() {
     }
 
     UnloadShader(shader);
+
     CloseWindow();
 
     return 0;
