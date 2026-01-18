@@ -43,10 +43,10 @@ int main() {
     SetShaderValue(shader, ambientLoc, (float[4]){ 0.1f, 0.1f, 0.1f, 1.0f }, SHADER_UNIFORM_VEC4);
 
     Light lights[3] = {0};
-    CreateLight(LIGHT_POINT,(Vector3){ 3.0f, 3.0f, 2.0f },Vector3Zero(),YELLOW,shader);
-    CreateLight(LIGHT_POINT,(Vector3){ -3.0f, 3.0f, 2.0f },Vector3Zero(),RED,shader);
-    CreateLight(LIGHT_POINT,(Vector3){ 3.0f, -3.0f, 2.0f },Vector3Zero(),GREEN,shader);
-    CreateLight(LIGHT_POINT,(Vector3){ -3.0f, -3.0f, 2.0f },Vector3Zero(),BLUE,shader);
+    CreateLight(LIGHT_POINT,(Vector3){ 3, 3, 2 },Vector3Zero(),YELLOW,shader);
+    CreateLight(LIGHT_POINT,(Vector3){ -3, 3, 2 },Vector3Zero(),RED,shader);
+    CreateLight(LIGHT_POINT,(Vector3){ 3, -3, 2 },Vector3Zero(),GREEN,shader);
+    CreateLight(LIGHT_POINT,(Vector3){ -3, -3, 2 },Vector3Zero(),BLUE,shader);
 
     SetTargetFPS(60);
 
@@ -62,8 +62,29 @@ int main() {
         if (IsKeyPressed(KEY_TWO)) { lights[1].enabled = !lights[1].enabled; }
         if (IsKeyPressed(KEY_THREE)) { lights[2].enabled = !lights[2].enabled; }
         if (IsKeyPressed(KEY_FOUR)) { lights[3].enabled = !lights[3].enabled; }
+
+
+        BeginDrawing();
+        ClearBackground(BLACK);
+        BeginMode3D(camera);
+        BeginShaderMode(shader);
+
+        for (int i = 0; i < 3; i++) {
+            if (lights[i].enabled) {
+                DrawSphereEx(lights[i].position, lights[i].position.y, lights[i].position.z,8,lights[i].color);
+            }else {
+                DrawSphereWires(lights[i].position, lights[i].position.y, lights[i].position.z,8,ColorAlpha(lights[i].color,0.3f));
+            }
+        }
+        EndMode3D();
+        DrawFPS(10,10);
+
+        DrawText("Use keys [1][2][3][4] to toggle lights",10,40,20,DARKGRAY);
+        EndDrawing();
     }
 
+    UnloadShader(shader);
+    CloseWindow();
 
     return 0;
 }
