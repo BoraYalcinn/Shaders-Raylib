@@ -1,0 +1,69 @@
+//
+// Created by Bora on 18.01.2026.
+//
+
+#include <iostream>
+#include <raylib.h>
+#include <raymath.h>
+#include <rcamera.h>
+
+#define RLIGHTS_IMPLEMENTATION
+#include <rlights.h>
+
+
+#if defined(PLATFORM_DESKTOP)
+    #define GLSL_VERSION 330
+#else
+    #define GLSL_VERSION 100
+#endif
+
+
+
+int main() {
+
+    const int screenWidth = 800;
+    const int screenHeight = 600;
+
+    SetConfigFlags(FLAG_MSAA_4X_HINT);
+    InitWindow(screenWidth, screenHeight, "Basic Shaders Using Raylib");
+
+    Camera camera = { 0 };
+    camera.position = (Vector3){ 2.0f, 4.0f, 0.0f };
+    camera.target = (Vector3){ 0.0f, 0.5f, 0.0f };
+    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    camera.fovy = 45.0f;
+    camera.projection = CAMERA_PERSPECTIVE;
+
+    Shader shader = LoadShader(TextFormat("./resources/shaders/lighting.vs", GLSL_VERSION),
+                               TextFormat("./resources/shaders/lighting.fs", GLSL_VERSION));
+
+    shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
+
+    int ambientLoc = GetShaderLocation(shader, "ambient");
+    SetShaderValue(shader, ambientLoc, (float[4]){ 0.1f, 0.1f, 0.1f, 1.0f }, SHADER_UNIFORM_VEC4);
+
+    Light lights[3] = {0};
+    CreateLight(LIGHT_POINT,(Vector3){ 3.0f, 3.0f, 2.0f },Vector3Zero(),YELLOW,shader);
+    CreateLight(LIGHT_POINT,(Vector3){ -3.0f, 3.0f, 2.0f },Vector3Zero(),RED,shader);
+    CreateLight(LIGHT_POINT,(Vector3){ 3.0f, -3.0f, 2.0f },Vector3Zero(),GREEN,shader);
+    CreateLight(LIGHT_POINT,(Vector3){ -3.0f, -3.0f, 2.0f },Vector3Zero(),BLUE,shader);
+
+    SetTargetFPS(60);
+
+    while (!WindowShouldClose()) {
+
+        UpdateCamera(&camera , CAMERA_ORBITAL);
+
+        float cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
+        SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
+
+
+        if (IsKeyPressed(KEY_ONE)) { lights[0].enabled = !lights[0].enabled; }
+        if (IsKeyPressed(KEY_TWO)) { lights[1].enabled = !lights[1].enabled; }
+        if (IsKeyPressed(KEY_THREE)) { lights[2].enabled = !lights[2].enabled; }
+        if (IsKeyPressed(KEY_FOUR)) { lights[3].enabled = !lights[3].enabled; }
+    }
+
+
+    return 0;
+}
