@@ -62,7 +62,9 @@ void main()
             }
 
             float NdotL = max(dot(normal, light), 0.0);
-            lightDot += lights[i].color.rgb*NdotL;
+            // INCREASED THE INTENSITY
+            float intensity = 2.5;
+            lightDot += lights[i].color.rgb * NdotL * intensity;
 
             float specCo = 0.0;
             if (NdotL > 0.0) specCo = pow(max(0.0, dot(viewD, reflect(-(light), normal))), 16.0); // 16 refers to shine

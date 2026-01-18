@@ -43,10 +43,10 @@ int main() {
     SetShaderValue(shader, ambientLoc, (float[4]){ 0.1f, 0.1f, 0.1f, 1.0f }, SHADER_UNIFORM_VEC4);
 
     Light lights[4] = {0};
-    lights[0] = CreateLight(LIGHT_POINT,(Vector3){ 3, 3, 2 },Vector3Zero(),YELLOW,shader);
-    lights[1] = CreateLight(LIGHT_POINT,(Vector3){ -3, 3, 2 },Vector3Zero(),RED,shader);
-    lights[2] = CreateLight(LIGHT_POINT,(Vector3){ 3, -3, 2 },Vector3Zero(),GREEN,shader);
-    lights[3] = CreateLight(LIGHT_POINT,(Vector3){ -3, -3, 2 },Vector3Zero(),BLUE,shader);
+    lights[0] = CreateLight(LIGHT_POINT,(Vector3){ 3, 1, 3 },Vector3Zero(),YELLOW,shader);
+    lights[1] = CreateLight(LIGHT_POINT,(Vector3){ -3, 1, 3 },Vector3Zero(),RED,shader);
+    lights[2] = CreateLight(LIGHT_POINT,(Vector3){ 3, 1, -3 },Vector3Zero(),GREEN,shader);
+    lights[3] = CreateLight(LIGHT_POINT,(Vector3){ -3, 1, -3 },Vector3Zero(),BLUE,shader);
 
     SetTargetFPS(60);
 
@@ -72,9 +72,9 @@ int main() {
         for (int i = 0; i < 4; i++) {
             UpdateLightValues(shader, lights[i]);
             if (lights[i].enabled) {
-                DrawSphereEx(lights[i].position, lights[i].position.y, lights[i].position.z,8,lights[i].color);
+                DrawSphereEx(lights[i].position, 0.2f, 8,8,lights[i].color);
             }else {
-                DrawSphereWires(lights[i].position, lights[i].position.y, lights[i].position.z,8,ColorAlpha(lights[i].color,0.3f));
+                DrawSphereWires(lights[i].position, 0.2f, 8,8,ColorAlpha(lights[i].color,0.3f));
             }
         }
         EndMode3D();
@@ -82,6 +82,7 @@ int main() {
 
         DrawText("Use keys [1][2][3][4] to toggle lights",10,40,20,DARKGRAY);
         EndDrawing();
+
     }
 
     UnloadShader(shader);
